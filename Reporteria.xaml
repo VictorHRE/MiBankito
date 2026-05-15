@@ -1,0 +1,174 @@
+﻿<UserControl x:Class="MiBankito.Reporteria"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:local="clr-namespace:MiBankito"
+             mc:Ignorable="d" 
+             d:DesignHeight="750" d:DesignWidth="800"
+             FontFamily="Segoe UI" FontSize="14">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <materialDesign:BundledTheme BaseTheme="Light" PrimaryColor="Blue" SecondaryColor="LightBlue" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesign2.Defaults.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MiBankito;component/Colors.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+            <Style x:Key="DataGridColumnHeaderStyle" TargetType="{x:Type DataGridColumnHeader}">
+                <Setter Property="Background" Value="{StaticResource PrimaryDarkBlueBrush}"/>
+                <Setter Property="Foreground" Value="White"/>
+                <Setter Property="FontWeight" Value="SemiBold"/>
+                <Setter Property="Height" Value="35"/>
+            </Style>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <UserControl.Style>
+        <Style TargetType="UserControl">
+            <Setter Property="Background" Value="{StaticResource BackgroundSecondaryBrush}"/>
+        </Style>
+    </UserControl.Style>
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="16">
+            <!-- Header del reporte con ícono y título -->
+            <Border Background="{StaticResource BackgroundWhiteBrush}" CornerRadius="8" Padding="20" Margin="8,8,8,16">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <materialDesign:PackIcon Kind="ChartBoxMultiple"
+                                             Width="32" Height="32"
+                                             Foreground="{StaticResource PrimaryDarkBlueBrush}"
+                                             VerticalAlignment="Center"
+                                             Margin="0,0,12,0"/>
+                    <TextBlock Text="Reporte de Transacciones"
+                               Grid.Column="1"
+                               FontSize="24"
+                               FontWeight="SemiBold"
+                               VerticalAlignment="Center"/>
+
+                    <!-- KPIs area and back button -->
+                    <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right">
+                        <StackPanel Margin="0,0,16,0" VerticalAlignment="Center" HorizontalAlignment="Right">
+                            <TextBlock Text="Transacciones Hoy" FontSize="16" Foreground="Gray" HorizontalAlignment="Right"/>
+                            <TextBlock x:Name="KpiTodayText" Text="0" FontSize="16" FontWeight="SemiBold" HorizontalAlignment="Right"/>
+                        </StackPanel>
+                        <StackPanel Margin="0,0,16,0" VerticalAlignment="Center" HorizontalAlignment="Right">
+                            <TextBlock Text="Ingresos del Día" FontSize="16" Foreground="Gray" HorizontalAlignment="Right"/>
+                            <TextBlock x:Name="KpiIncomeText" Text="C$ 0.00" FontSize="16" FontWeight="SemiBold" HorizontalAlignment="Right"/>
+                        </StackPanel>
+
+                        <Button Width="100" HorizontalAlignment="Right" Style="{StaticResource MaterialDesignOutlinedButton}" Click="Back_Click">
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                <TextBlock Text="Volver" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Button>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- Controles de búsqueda y filtro -->
+            <Border Background="{StaticResource BackgroundWhiteBrush}" CornerRadius="8" Padding="20" Margin="8,0,8,16">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Campo de búsqueda por proveedor -->
+                    <ComboBox Grid.Column="0" x:Name="PlatformCombo" SelectedIndex="0"
+                              Style="{StaticResource MaterialDesignOutlinedComboBox}"
+                              materialDesign:HintAssist.Hint="Buscar por Proveedor"
+                              Margin="0,0,16,0">
+                        <ComboBoxItem Content="(Todas)" Tag="*"/>
+                        <ComboBoxItem Content="PAGALOTODO"/>
+                        <ComboBoxItem Content="PUNTO EXPRESS"/>
+                        <ComboBoxItem Content="BANPRO"/>
+                        <ComboBoxItem Content="LAFISE"/>
+                        <ComboBoxItem Content="BAC"/>
+                        <ComboBoxItem Content="FICOHSA"/>
+                        <ComboBoxItem Content="AVANZ"/>
+                        <ComboBoxItem Content="BFP"/>
+                    </ComboBox>
+
+                    <!-- Campo de fecha o rango de fechas -->
+                    <DatePicker Grid.Column="1" x:Name="FromDate"
+                                Style="{StaticResource MaterialDesignOutlinedDatePicker}"
+                                materialDesign:HintAssist.Hint="Seleccionar Fecha"
+                                Margin="0,0,16,0" />
+
+                    <!-- Botón de búsqueda -->
+                    <Button Grid.Column="2"
+                            Style="{StaticResource MaterialDesignRaisedButton}"
+                            Background="{StaticResource PrimaryDarkBlueBrush}"
+                            Foreground="White"
+                            HorizontalAlignment="Right"
+                            Margin="0,0,16,0"
+                            Click="Search_Click">
+                        <StackPanel Orientation="Horizontal">
+                            <materialDesign:PackIcon Kind="Magnify" Width="18" Height="18" Margin="0,0,8,0"/>
+                            <TextBlock Text="Filtrar Reporte"/>
+                        </StackPanel>
+                    </Button>
+
+                    <!-- Nuevo botón para exportar a Excel -->
+                    <Button Grid.Column="3"
+                            Style="{StaticResource MaterialDesignRaisedButton}"
+                            Background="#008f39"
+                            Foreground="White"
+                            HorizontalAlignment="Right"
+                            Click="Export_Click">
+                        <StackPanel Orientation="Horizontal">
+                            <materialDesign:PackIcon Kind="MicrosoftExcel" Width="18" Height="18" Margin="0,0,8,0"/>
+                            <TextBlock Text="Exportar a Excel"/>
+                        </StackPanel>
+                    </Button>
+                </Grid>
+            </Border>
+
+            <!-- Contenedor para la tabla de datos -->
+            <Border Background="{StaticResource BackgroundWhiteBrush}" CornerRadius="8" Padding="20" Margin="8,0,8,8">
+                <StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,16">
+                        <materialDesign:PackIcon Kind="Table"
+                                                 Width="24"
+                                                 Height="24"
+                                                 Foreground="{StaticResource PrimaryDarkBlueBrush}"
+                                                 Margin="0,0,12,0"/>
+                        <TextBlock Text="Detalles de Transacciones"
+                                   FontSize="16"
+                                   FontWeight="SemiBold"
+                                   VerticalAlignment="Center"/>
+                    </StackPanel>
+
+                    <DataGrid x:Name="ResultsList"
+                              AutoGenerateColumns="False"
+                              CanUserAddRows="False"
+                              IsReadOnly="True"
+                              HeadersVisibility="Column"
+                              GridLinesVisibility="Horizontal"
+                              ColumnHeaderStyle="{StaticResource DataGridColumnHeaderStyle}">
+
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Proveedor" Width="Auto" Binding="{Binding Platform}"/>
+                            <DataGridTextColumn Header="Servicio" Width="*" Binding="{Binding Service}" />
+                            <DataGridTextColumn Header="Referencia" Width="*" Binding="{Binding Reference}" />
+                            <DataGridTextColumn Header="Documento Cliente" Width="*" Binding="{Binding CustomerDocument}" />
+                            <DataGridTextColumn Header="Monto" Width="Auto" Binding="{Binding Amount, StringFormat=C2}" />
+                            <DataGridTextColumn Header="Moneda" Width="Auto" Binding="{Binding Currency}" />
+                            <DataGridTextColumn Header="Fecha de Creación" Width="*" Binding="{Binding Timestamp, StringFormat='g'}" />
+                            <DataGridTextColumn Header="ID Cajero" Width="Auto" Binding="{Binding CashierId}" />
+                            <DataGridTextColumn Header="Autorización" Width="*" Binding="{Binding Authorization}" />
+                            <DataGridTextColumn Header="Transacción RMH" Width="*" Binding="{Binding RmhTransactionId}" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </StackPanel>
+            </Border>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

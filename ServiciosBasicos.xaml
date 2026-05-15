@@ -1,0 +1,185 @@
+﻿<UserControl x:Class="MiBankito.ServiciosBasicos"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:local="clr-namespace:MiBankito"
+             mc:Ignorable="d" 
+             d:DesignHeight="850" d:DesignWidth="1000">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <materialDesign:BundledTheme BaseTheme="Light" PrimaryColor="DeepOrange" SecondaryColor="LightBlue" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesign2.Defaults.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MiBankito;component/Colors.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+
+            <!-- Estilos rectangulares -->
+            <Style x:Key="CapsuleChipStyle" TargetType="ToggleButton">
+                <Setter Property="Foreground" Value="{StaticResource PrimaryIndigoBrush}"/>
+                <Setter Property="Background" Value="Transparent"/>
+                <Setter Property="BorderBrush" Value="#DDE2E6"/>
+                <Setter Property="BorderThickness" Value="2"/>
+                <Setter Property="Padding" Value="16,8"/>
+                <Setter Property="MinWidth" Value="120"/>
+                <Setter Property="Cursor" Value="Hand"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="ToggleButton">
+                            <Border x:Name="border" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="5" Padding="{TemplateBinding Padding}">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsChecked" Value="True">
+                                    <Setter TargetName="border" Property="Background" Value="{StaticResource PrimaryIndigoBrush}"/>
+                                    <Setter Property="Foreground" Value="{StaticResource TextWhiteBrush}"/>
+                                    <Setter TargetName="border" Property="BorderBrush" Value="{StaticResource PrimaryIndigoBrush}"/>
+                                </Trigger>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="border" Property="Opacity" Value="0.9"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+            <Style x:Key="SmallCapsuleChipStyle" TargetType="ToggleButton" BasedOn="{StaticResource CapsuleChipStyle}">
+                <Setter Property="Padding" Value="12,6"/>
+                <Setter Property="MinWidth" Value="110"/>
+                <Setter Property="FontSize" Value="12"/>
+            </Style>
+            <Style x:Key="DataGridHeaderStyle" TargetType="DataGridColumnHeader">
+                <Setter Property="Background" Value="{StaticResource PrimaryDarkBlueBrush}"/>
+                <Setter Property="Foreground" Value="White"/>
+                <Setter Property="FontWeight" Value="Bold"/>
+                <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            </Style>
+        </ResourceDictionary>
+    </UserControl.Resources>
+
+    <Grid Background="{StaticResource BackgroundSecondaryBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Banner Superior -->
+        <Border Grid.Row="0" Background="{StaticResource PrimaryDarkBlueBrush}" Padding="16,10">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <materialDesign:PackIcon Kind="SwapHorizontal" Foreground="White" Width="20" Height="20"/>
+                    <TextBlock Text="PAGO" Foreground="White" FontWeight="Bold" FontSize="18" Margin="8,0,0,0"/>
+                </StackPanel>
+                <StackPanel Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                    <Border Width="70" Height="50"  Background="White" BorderBrush="#FFCC7A" BorderThickness="1" VerticalAlignment="Center">
+                        <Image x:Name="HeaderServiceLogo" Stretch="Uniform"/>
+                    </Border>
+                    <TextBlock x:Name="HeaderServiceName" Text="" Foreground="White" FontWeight="SemiBold" Margin="15,15,5,0"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- Contenido -->
+        <Border Grid.Row="1" Margin="0,8,0,0">
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <StackPanel Margin="16">
+                    <!-- Selector de Servicio (lista unificada) -->
+                    <materialDesign:Card Padding="16" Margin="0,0,0,16" Background="{StaticResource BackgroundWhiteBrush}">
+                        <StackPanel>
+                            <TextBlock Text="SELECCIONE UN SERVICIO" FontWeight="Bold" Foreground="#0A2142" Margin="0,0,0,4"/>
+                            <WrapPanel x:Name="ServiceWrapPanel" HorizontalAlignment="Left">
+                            </WrapPanel>
+                        </StackPanel>
+                    </materialDesign:Card>
+
+                    <!-- Card para selecciones de divisa -->
+                    <materialDesign:Card Padding="16" Margin="0,0,0,16" Background="{StaticResource BackgroundWhiteBrush}">
+                        <StackPanel>
+                            <!-- Grupo Divisas -->
+                            <StackPanel Margin="0,0,0,12">
+                                <TextBlock Text="SELECCIONE DIVISA" FontWeight="Bold" Foreground="#0A2142" Margin="0,0,0,4"/>
+                                <WrapPanel HorizontalAlignment="Left">
+                                    <ToggleButton x:Name="CurCordobas" Content="CÓRDOBAS" Style="{StaticResource SmallCapsuleChipStyle}" Margin="4" Click="CurrencyChip_Click"/>
+                                    <ToggleButton x:Name="CurDolares" Content="DÓLARES" Style="{StaticResource SmallCapsuleChipStyle}" Margin="4" Click="CurrencyChip_Click"/>
+                                </WrapPanel>
+                            </StackPanel>
+                        </StackPanel>
+                    </materialDesign:Card>
+
+                    <TextBlock Text="Completa los Datos" FontSize="20" FontWeight="Bold" Foreground="#0A2142" Margin="0,8,0,8"/>
+
+                    <!-- Formulario -->
+                    <materialDesign:Card Padding="16" Margin="0,0,0,16" Background="{StaticResource BackgroundWhiteBrush}">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="16"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <StackPanel Grid.Row="0" Grid.Column="0" Margin="0,0,0,8">
+                                <TextBlock x:Name="AccountLabel" Text="Referencia (Contrato / Teléfono)" FontWeight="SemiBold"/>
+                                <TextBox x:Name="ReferenceText" Style="{StaticResource MaterialDesignOutlinedTextBox}" materialDesign:HintAssist.Hint="Referencia"/>
+                            </StackPanel>
+                            <StackPanel Grid.Row="0" Grid.Column="2" Margin="0,0,0,8">
+                                <TextBlock Text="Monto" FontWeight="SemiBold"/>
+                                <TextBox x:Name="AmountText" Style="{StaticResource MaterialDesignOutlinedTextBox}" Text="0.00" TextChanged="AmountText_TextChanged"/>
+                            </StackPanel>
+
+                            <StackPanel Grid.Row="2" Grid.ColumnSpan="3" Margin="0,0,0,8">
+                                <TextBlock Text="Descripción" FontWeight="SemiBold"/>
+                                <TextBox x:Name="DescriptionText" Style="{StaticResource MaterialDesignOutlinedTextBox}" AcceptsReturn="True" Height="70" TextWrapping="Wrap" materialDesign:HintAssist.Hint="Nota en el ticket / observaciones"/>
+                            </StackPanel>
+
+                            <StackPanel Grid.Row="3" Grid.ColumnSpan="3" Margin="0,8,0,0">
+                                <TextBlock Text="Detalle" FontWeight="SemiBold" Margin="0,0,0,8"/>
+                                <DataGrid x:Name="DetalleDataGrid" AutoGenerateColumns="False" IsReadOnly="True" Height="60" Background="{StaticResource BackgroundWhiteBrush}" BorderBrush="#E0E0E0" BorderThickness="1" HeadersVisibility="Column">
+                                    <DataGrid.Columns>
+                                        <DataGridTextColumn Header="CÓDIGO" Binding="{Binding Code}" Width="120" HeaderStyle="{StaticResource DataGridHeaderStyle}"/>
+                                        <DataGridTextColumn Header="NOMBRE DEL SERVICIO" Binding="{Binding Service}" Width="Auto" HeaderStyle="{StaticResource DataGridHeaderStyle}"/>
+                                        <DataGridTextColumn Header="REFERENCIA" Binding="{Binding Reference}" Width="140" HeaderStyle="{StaticResource DataGridHeaderStyle}"/>
+                                        <DataGridTextColumn Header="MONEDA" Binding="{Binding Currency}" Width="100" HeaderStyle="{StaticResource DataGridHeaderStyle}"/>
+                                        <DataGridTextColumn Header="MONTO" Binding="{Binding Amount, StringFormat=C2}" Width="100" HeaderStyle="{StaticResource DataGridHeaderStyle}"/>
+                                    </DataGrid.Columns>
+                                </DataGrid>
+                            </StackPanel>
+                        </Grid>
+                    </materialDesign:Card>
+
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                        <Button Content="CANCELAR" Width="160" Height="42" Padding="16,10" Margin="0,0,12,0" BorderBrush="#FFCC7A" Foreground="White" Click="Back_Click"/>
+                        <Button x:Name="ActionButton" Content="Consultar" Width="160" Height="42" Padding="16,10" Background="{StaticResource SuccessGreenBrush}" Foreground="White" Click="ActionButton_Click"/>
+                    </StackPanel>
+
+                    <!-- Combos ocultos para lógica existente (sin selección inicial) -->
+                    <StackPanel Visibility="Collapsed">
+                        <ComboBox x:Name="PlatformCombo">
+                            <ComboBoxItem Content="BANPRO"/>
+                            <ComboBoxItem Content="LAFISE"/>
+                            <ComboBoxItem Content="BAC"/>
+                            <ComboBoxItem Content="FICOHSA"/>
+                            <ComboBoxItem Content="AVANZ"/>
+                            <ComboBoxItem Content="BFP"/>
+                        </ComboBox>
+                        <ComboBox x:Name="CurrencyCombo" SelectionChanged="CurrencyCombo_SelectionChanged">
+                            <ComboBoxItem Content="Córdobas (NIO)"/>
+                            <ComboBoxItem Content="Dólares (USD)"/>
+                        </ComboBox>
+                    </StackPanel>
+                </StackPanel>
+            </ScrollViewer>
+        </Border>
+    </Grid>
+</UserControl>
